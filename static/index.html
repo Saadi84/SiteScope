@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3d5b59"><title>SiteScope — Website Page Discovery & Verification Tool</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<main class="container">
+  <header class="header">
+    <div class="brand"><span class="logo" aria-hidden="true">↗</span><div><h1>SiteScope</h1><p class="product-subtitle">Website Page Discovery, Verification &amp; Redirect Planning Tool</p><p class="product-description">Discover internal pages, verify accessibility, remove URL noise and duplicates, and build user-controlled 301/302 redirect plans for confirmed broken pages.</p><div class="feature-strip" aria-label="Key features"><span>Page Discovery</span><span>Browser Verification</span><span>URL Cleanup</span><span>Redirect Assistant</span><span>Excel / CSV Export</span></div></div></div>
+    <span class="local">● Local only · Port 8766</span>
+  </header>
+  <section class="panel setup" aria-labelledby="scan-title">
+    <div class="section-heading"><div><span class="eyebrow">START A SCAN</span><h2 id="scan-title">Discover and verify a website's internal pages</h2></div><span class="chip">Same-site pages</span></div>
+    <form id="form">
+      <label for="url">Website URL</label>
+      <div class="url-input"><span aria-hidden="true">🌐</span><input id="url" type="url" autocomplete="url" placeholder="https://example.com/" value="https://tekglide.com/" required></div>
+      <div class="entry-tools"><button class="ghost entry-detect" type="button" id="detect-entry">◎ Detect country / language site versions</button><span class="hint entry-hint">Useful when a website first shows a country, language or regional storefront selector.</span></div>
+      <div id="entry-box" class="entry-box" hidden><div><b>Site versions detected</b><p id="entry-message" class="hint">Choose the version you want SiteScope to scan.</p></div><div class="entry-choice"><select id="entry-select" aria-label="Detected site version"></select><button class="primary" type="button" id="use-entry">Use selected version</button></div></div>
+      <div class="fields">
+        <div><label for="max-pages">Optional page limit <span class="muted">— blank = no limit</span></label><input id="max-pages" type="number" min="1" step="1" placeholder="No limit (scan until finished or stopped)"><p class="hint">No preset page cap. You can stop an ongoing scan anytime.</p></div>
+        <div><label for="delay">Delay between requests (seconds)</label><input id="delay" type="number" min="0.5" max="10" step="0.5" value="0.5" required><p class="hint">Use a considerate delay; larger sites can take a long time.</p></div>
+      </div>
+      <label class="browser-mode" for="browser-mode"><input id="browser-mode" type="checkbox" checked><span><b>Browser-assisted scan</b> — load pages in Chromium to find JavaScript links and check scanner-blocked pages. Slower but more complete.</span></label>
+      <label class="browser-mode" for="include-archives"><input id="include-archives" type="checkbox"><span><b>Include archive/navigation URLs in results</b> — author, category, tag, search, feed and pagination URLs. Leave off for a cleaner list of real content pages; these URLs are still crawled to discover older pages.</span></label>
+      <div class="actions"><button class="primary" id="start" type="submit">▶ Start scan</button><button class="ghost" type="button" id="stop" disabled>■ Stop scan</button><span id="activity" role="status" aria-live="polite">Ready to scan</span></div>
+    </form>
+  </section>
+  <section class="metrics" aria-label="Scan summary">
+    <div class="metric metric-discovered"><div class="metric-name">Discovered candidates</div><strong id="discovered">0</strong><small>Raw content-page candidates found before cleanup</small></div>
+    <div class="metric metric-unique"><div class="metric-name">Unique results</div><strong id="unique-results">0</strong><small>Clean rows shown in the table and export</small></div>
+    <div class="metric metric-merged"><div class="metric-name">Duplicates merged</div><strong id="duplicates-merged">0</strong><small>Redirect / canonical / trailing-slash aliases removed</small></div>
+    <div class="metric"><div class="metric-name">Working <i class="dot green"></i></div><strong id="working">0</strong><small>Scanner or browser verified</small></div>
+    <div class="metric"><div class="metric-name">Not working <i class="dot red"></i></div><strong id="not-working">0</strong><small>404 / 410 / confirmed non-access 4xx</small></div>
+    <div class="metric"><div class="metric-name">Blocked <i class="dot amber"></i></div><strong id="blocked">0</strong><small>401 / 403 / 429, not browser-verified</small></div>
+    <div class="metric"><div class="metric-name">Other <i class="dot gray"></i></div><strong id="other">0</strong><small>Network / server / robots / pending</small></div>
+  </section>
+  <div class="notice" id="notice" role="status" aria-live="polite"><span class="notice-icon">ⓘ</span><span id="notice-text">SiteScope discovers publicly reachable same-site pages from sitemaps, links, and optional browser rendering. Private, unlinked, or access-restricted pages can still be missed.</span></div>
+  <section class="panel results" aria-labelledby="results-title">
+    <div class="result-head"><div><span class="eyebrow">YOUR RESULTS</span><h2 id="results-title">Discovered pages <span class="tiny" id="table-count">0</span></h2><p class="hint">Open any URL in a new tab. Select “Details” for sources and full notes.</p></div>
+    <div class="result-actions"><input aria-label="Filter by URL, title, status, HTTP or notes" id="filter" type="search" placeholder="Search any page or status…"><button class="export" id="export" disabled>⬇ Excel</button><button class="ghost" id="csv" disabled>⬇ CSV</button></div></div>
+    <div class="table-wrap"><table>
+      <colgroup><col class="col-no"><col class="col-url"><col class="col-status"><col class="col-http"><col class="col-title"><col class="col-action"></colgroup>
+      <thead><tr><th scope="col">#</th><th scope="col">Page URL</th><th scope="col">Status</th><th scope="col">HTTP <small>Scanner / Browser</small></th><th scope="col">Page title</th><th scope="col">More</th></tr></thead>
+      <tbody id="body"><tr class="empty"><td colspan="6">Your scan results will appear here.</td></tr></tbody>
+    </table></div>
+    <div class="table-footer"><span id="shown">Showing 0 results</span><div class="pagination"><button class="ghost" id="prev" disabled>← Previous</button><span id="page-label">Page 1</span><button class="ghost" id="next" disabled>Next →</button></div></div>
+    <p class="footer-line">By default, archive/navigation routes are traversed but hidden from results so they can reveal older content without inflating the page count. 403 alone does not mean a page is broken.</p>
+  </section>
+  <section class="panel redirect-panel" id="redirect-panel" aria-labelledby="redirect-title">
+    <div class="section-heading redirect-heading">
+      <div><span class="eyebrow">REDIRECT ASSISTANT</span><h2 id="redirect-title">Turn broken URLs into an action-ready redirect plan</h2><p class="hint">SiteScope suggests relevant working pages. You choose the destination and redirect type; nothing is changed on the live website automatically.</p></div>
+      <span class="chip" id="broken-ready">0 broken URLs ready</span>
+    </div>
+    <div id="redirect-empty" class="redirect-empty">Run a scan first. Confirmed <b>Not working</b> pages (404/410) will appear here.</div>
+    <div id="redirect-workspace" class="redirect-workspace" hidden>
+      <div class="redirect-builder">
+        <div><label for="broken-select">Broken URL</label><select id="broken-select"></select></div>
+        <div><label for="target-select">Suggested destination</label><select id="target-select"></select></div>
+        <div><label for="redirect-code">Redirect type</label><select id="redirect-code"><option value="301">301 — Permanent</option><option value="302">302 — Temporary</option></select></div>
+        <button class="primary redirect-add" id="add-redirect" type="button">＋ Add redirect</button>
+      </div>
+      <div class="custom-target-row">
+        <label for="custom-target">Or enter a working destination URL manually</label>
+        <div class="custom-target-control"><input id="custom-target" type="url" placeholder="https://example.com/new-page/"><button class="ghost" id="use-custom-target" type="button">Use this URL</button></div>
+      </div>
+      <div class="redirect-plan-head"><div><b>Redirect plan</b><span id="redirect-count">0 rules</span></div><div class="redirect-actions"><button class="ghost" id="copy-apache" type="button" disabled>Copy .htaccess</button><button class="ghost" id="copy-nginx" type="button" disabled>Copy Nginx</button><button class="export" id="redirect-csv" type="button" disabled>⬇ Redirect CSV</button></div></div>
+      <div class="redirect-list-wrap"><table class="redirect-table"><thead><tr><th>From (broken)</th><th>Type</th><th>To (selected by user)</th><th></th></tr></thead><tbody id="redirect-body"><tr class="empty"><td colspan="4">No redirect rules added yet.</td></tr></tbody></table></div>
+      <p class="footer-line"><b>How to use:</b> export/copy the plan and apply it in the website's CMS, hosting panel, Apache or Nginx configuration. Direct one-click changes to a live site require that site's credentials/integration, so SiteScope never edits a website without explicit access.</p>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
