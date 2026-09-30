@@ -1,5 +1,16 @@
 # SiteScope — Website Page Discovery & Verification Tool
 
+## Screenshots
+
+### Dashboard
+![SiteScope Dashboard](screenshots/dashboard.png.PNG)
+
+### Scan Results
+![SiteScope Results](screenshots/results.png.PNG)
+
+### Redirect Assistant
+![Redirect Assistant](screenshots/redirect-assistant.png.PNG)
+
 SiteScope is a local same-site crawler built to discover publicly reachable internal pages, verify whether they are available, reduce noisy archive/navigation results, export clean Excel or CSV reports, and build redirect plans for confirmed broken URLs. It runs on **http://127.0.0.1:8766** so another local app can keep port 8765.
 
 ## Run on Windows
